@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Callgrid API Tester</title>
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --primary-light: #eef2ff;
+            --success: #10b981;
+            --success-bg: #ecfdf5;
+            --danger: #ef4444;
+            --border: #e2e8f0;
+            --console-bg: #0a0e1a;
+            --console-text: #5eead4;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: var(--bg-gradient);
+            background-attachment: fixed;
+            color: var(--text-main);
+            max-width: 640px;
+            margin: 0 auto;
+            padding: 48px 20px;
+            min-height: 100vh;
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 36px;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05);
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--primary-light);
+            padding-bottom: 18px;
+            margin-bottom: 28px;
+            gap: 12px;
+        }
+
+        h2 {
+            margin: 0;
+            font-size: 1.4rem;
+            font-weight: 800;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+            color: var(--text-main);
+            background: linear-gradient(135deg, var(--primary), #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .status-badge {
+            font-size: 0.78rem;
+            font-weight: 700;
+            padding: 7px 14px;
+            border-radius: 20px;
+            background: #f1f5f9;
+            color: var(--text-muted);
+            white-space: nowrap;
+            transition: all 0.3s ease;
+            border: 1px solid var(--border);
+        }
+
+        .status-badge.success {
+            background: var(--success-bg);
+            color: var(--success);
+            border: 1px solid #a7f3d0;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .grid-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 700;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            font-size: 0.95rem;
+            background-color: #f8fafc;
+            color: var(--text-main);
+            transition: all 0.2s ease;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            background-color: #fff;
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.12);
+        }
+
+        button {
+            background: linear-gradient(135deg, var(--primary), #6d28d9);
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 700;
+            width: 100%;
+            transition: transform 0.15s ease, box-shadow 0.2s ease;
+            box-shadow: 0 8px 20px -6px rgba(79, 70, 229, 0.5);
+            margin-top: 6px;
+        }
+
+        button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 24px -6px rgba(79, 70, 229, 0.6);
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        .console {
+            background: var(--console-bg);
+            color: var(--console-text);
+            padding: 18px;
+            border-radius: 12px;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-size: 0.82rem;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            margin-top: 26px;
+            max-height: 280px;
+            overflow-y: auto;
+            border: 1px solid #1e293b;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.4);
+        }
+
+        .console::-webkit-scrollbar {
+            width: 8px;
+        }
+        .console::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <div class="header-container">
+        <h2>CALLGRID API TESTER</h2>
+        <div id="statusBadge" class="status-badge">Idle</div>
+    </div>
+
+    <div class="form-group">
+        <label for="callerId">Caller ID:</label>
+        <input type="text" id="callerId" value="">
+    </div>
+    
+    <div class="grid-row">
+        <div class="form-group">
+            <label for="stateCode">Inbound State Code:</label>
+            <input type="text" id="stateCode" value="">
+        </div>
+        <div class="form-group">
+            <label for="zipCode">Inbound Zip Code:</label>
+            <input type="text" id="zipCode" value="">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="interval">Auto-Ping Interval:</label>
+        <select id="interval">
+            <option value="5">5 Seconds</option>
+            <option value="10" selected>10 Seconds</option>
+        </select>
+    </div>
+    <button id="pingBtn" onclick="toggleAutoPing()">Start Auto-Ping</button>
+
+    <div class="console" id="consoleOutput">System ready...</div>
+</div>
+
+<script>
+    let intervalId = null;
+
+    async function sendPing() {
+        const callerId = document.getElementById('callerId').value;
+        const stateCode = document.getElementById('stateCode').value;
+        const zipCode = document.getElementById('zipCode').value;
+        const output = document.getElementById('consoleOutput');
+        const badge = document.getElementById('statusBadge');
+
+        const timestamp = new Date().toLocaleTimeString();
+        output.textContent += `[${timestamp}] Sending ping...\n`;
+        output.scrollTop = output.scrollHeight;
+
+        try {
+            const response = await fetch(`/api/ping?CallerId=${encodeURIComponent(callerId)}&InboundStateCode=${encodeURIComponent(stateCode)}&InboundZipCode=${encodeURIComponent(zipCode)}`);
+            const data = await response.json();
+            
+            output.textContent += `[${timestamp}] Response: ${JSON.stringify(data, null, 2)}\n`;
+
+            // Check if code 1000 match is received
+            if (data && data.data && data.data.code === 1000) {
+                badge.textContent = "✔ Match Found (1000)";
+                badge.classList.add('success');
+                output.textContent += `[${timestamp}] Success! Match found. Stopping auto-ping.\n`;
+                
+                if (intervalId) {
+                    toggleAutoPing();
+                }
+            }
+        } catch (error) {
+            output.textContent += `[${timestamp}] Error: ${error.message}\n`;
+        }
+        output.scrollTop = output.scrollHeight;
+    }
+
+    function toggleAutoPing() {
+        const btn = document.getElementById('pingBtn');
+        const badge = document.getElementById('statusBadge');
+        const intervalSec = parseInt(document.getElementById('interval').value, 10);
+
+        if (intervalId) {
+            clearInterval(intervalId);
+            intervalId = null;
+            btn.textContent = "Start Auto-Ping";
+            btn.style.background = "linear-gradient(135deg, #4f46e5, #6d28d9)";
+            if (!badge.classList.contains('success')) {
+                badge.textContent = "Idle";
+            }
+            output.textContent += `--- Auto-ping stopped ---\n`;
+        } else {
+            badge.classList.remove('success');
+            badge.textContent = `Running (${intervalSec}s)...`;
+            sendPing(); // Fire immediately once
+            intervalId = setInterval(sendPing, intervalSec * 1000);
+            btn.textContent = "Stop Auto-Ping";
+            btn.style.background = "linear-gradient(135deg, #ef4444, #b91c1c)";
+            document.getElementById('consoleOutput').textContent += `--- Auto-ping started (${intervalSec}s interval) ---\n`;
+        }
+    }
+</script>
+
+</body>
+</html>
