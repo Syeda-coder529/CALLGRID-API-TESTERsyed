@@ -6,7 +6,7 @@ export default async function handler(req, res) {
     const { CallerId, InboundStateCode, InboundZipCode } = req.query;
 
     // Base target URL provided
-    const targetUrl = new URL('https://bid.callgrid.com/api/bid/cmtnk29xm07lq06k0okc3hlvi');
+    const targetUrl = new URL('https://bid.callgrid.com/api/bid/cmtumin6i06o206jwu70i77uc');
     
     if (CallerId) targetUrl.searchParams.append('CallerId', CallerId);
     if (InboundStateCode) targetUrl.searchParams.append('InboundStateCode', InboundStateCode);
